@@ -1,4 +1,4 @@
-#!/Users/jeremias/.pyenv/versions/anaconda3-5.0.0/bin/python
+#!/usr/bin/env python3
 # Given a fasta file and the corresponding blast output this script annotates the fasta with the hit resulting in the longest alignment and covering the beginning of the query
 #     Copyright (C) 2018  Jeremias N. Brand
 
@@ -93,19 +93,12 @@ def main():
 	        v = blast_dict[record_dict[record].id]
 	        coverage = 0
 	        annotation = "No hit"
-	        if len(v) > 1:
+	        if len(v) >= 1:
 	            for res in v:
 	                hit_cov = int(res.length)/int(res.qlen)
 	                if check_hit_position(res, coverage,
 	                 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
 	                    coverage = hit_cov 
-	                    annotation = res.sseqid + " cov: " + str(coverage)
-	        elif len(v) == 1:
-	            res = v[0]
-	            hit_cov = int(res.length)/int(res.qlen)
-	            if check_hit_position(res, coverage,
-	                 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
-	                    coverage = hit_cov
 	                    annotation = res.sseqid + " cov: " + str(coverage)
 	        else:
 	            print("No entries for " + record_dict[record].id + "!")
