@@ -61,6 +61,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("input_fasta", type=str, help="fasta file to annotate")
 	parser.add_argument("blast_output", type=str, help="blast output of input_fasta")
+	parser.add_argument("blast_type", type=str, help="type of blast conducted to produce output: currently blastn or blastx")
 	parser.add_argument("output_file", type=str, help="name of the outfile")
 	parser.add_argument("max_query_start", type=int, help="maximum start position of blast alignment in query")
 	parser.add_argument("max_subject_start", type=int, help="maximum start position of blast alignment in subject")
@@ -69,6 +70,7 @@ def main():
 
 	seq_handle = args.input_fasta
 	blast_output = args.blast_output
+	blast_type = args.blast_type
 	output_file = args.output_file
 	max_query_start = args.max_query_start
 	max_subject_start = args.max_subject_start
@@ -95,11 +97,19 @@ def main():
 	        annotation = "No hit"
 	        if len(v) >= 1:
 	            for res in v:
-	                hit_cov = int(res.length)/int(res.qlen)
-	                if check_hit_position(res, coverage,
-	                 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
-	                    coverage = hit_cov 
-	                    annotation = res.sseqid + " cov: " + str(coverage)
+			if blast_type == 'blastn' 
+				hit_cov = int(res.length)/int(res.qlen)
+				if check_hit_position(res, coverage,
+				 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
+				    coverage = hit_cov 
+				    annotation = res.sseqid + " cov: " + str(coverage)
+			if blast_type == 'blastx' 
+				hit_cov = int(res.length)/(int(res.qlen)*3)
+				if check_hit_position(res, coverage,
+				 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
+				    coverage = hit_cov 
+				    annotation = res.sseqid + " cov: " + str(coverage)
+
 	        else:
 	            print("No entries for " + record_dict[record].id + "!")
 
