@@ -97,13 +97,13 @@ def main():
 	        annotation = "No hit"
 	        if len(v) >= 1:
 	            for res in v:
-			if blast_type == 'blastn' 
+			if blast_type == 'blastn':
 				hit_cov = int(res.length)/int(res.qlen)
 				if check_hit_position(res, coverage,
 				 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
 				    coverage = hit_cov 
 				    annotation = res.sseqid + " cov: " + str(coverage)
-			if blast_type == 'blastx' 
+			if blast_type == 'blastx':
 				hit_cov = int(res.length)/(int(res.qlen)*3)
 				if check_hit_position(res, coverage,
 				 max_query_start = max_query_start, max_subject_start = max_subject_start, min_coverage = min_coverage):
