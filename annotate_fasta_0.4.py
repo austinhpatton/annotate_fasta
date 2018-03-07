@@ -49,17 +49,17 @@ def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_
     returns a boolean, False if the conditions are not met
 
     """
+    assert blast_type in ['blastn', 'blastx'], "Only blastn and blastx is supported."
     res = False
-    if blast_type == 'blastn':
-        if (int(BlastRes_obj.qstart) <= max_query_start and  int(BlastRes_obj.sstart) <= max_subject_start):
+    
+    if (int(BlastRes_obj.qstart) <= max_query_start and  int(BlastRes_obj.sstart) <= max_subject_start):
+        if blast_type == 'blastn':
             hit_diff = 1-(int(BlastRes_obj.length)/int(BlastRes_obj.qlen))
-            if (abs(hit_diff) < max_diff):
-                res = True
-    if blast_type == 'blastx':
-        if (int(BlastRes_obj.qstart) <= max_query_start and  int(BlastRes_obj.sstart) <= max_subject_start):
+        else:
             hit_diff = 1-((int(BlastRes_obj.length)*3)/int(BlastRes_obj.qlen))
-            if (abs(hit_diff) < max_diff):
-                res = True
+        if (abs(hit_diff) < max_diff):
+            res = True
+
     return res
 
 
@@ -107,15 +107,11 @@ def main():
                 for res in v:
                     if blast_type == 'blastn':
                         hit_diff = 1-(int(res.length)/int(res.qlen))
-                        if check_hit_position(res, coverage, max_query_start = max_query_start, max_subject_start = max_subject_start, max_diff = max_diff):
-                            percent_diff = hit_diff 
-                            annotation = res.sseqid + " Diff: " + str(percent_diff)
-                    if blast_type == 'blastx':
+                    else:
                         hit_diff = 1-((int(res.length)*3)/int(res.qlen))
-                        if check_hit_position(res, coverage, max_query_start = max_query_start, max_subject_start = max_subject_start, max_diff = max_diff):
-                            percent_diff = hit_diff
-                            annotation = res.sseqid + " Diff: " + str(percent_diff)
-
+                    if check_hit_position(res, coverage, max_query_start = max_query_start, max_subject_start = max_subject_start, max_diff = max_diff):
+                        percent_diff = hit_diff 
+                        annotation = res.sseqid + " Diff: " + str(round(percent_diff, 2))
             else:
                 print("No entries for " + record_dict[record].id + "!")
 
