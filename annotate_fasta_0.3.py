@@ -47,7 +47,6 @@ def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_
     """
     Checks if a hit stored in a BlastRes class object meets the hit criteria we give
     returns a boolean, False if the conditions are not met
-
     """
     res = False
     if (int(BlastRes_obj.qstart) <= max_query_start and  int(BlastRes_obj.sstart) <= max_subject_start):
@@ -111,3 +110,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
