@@ -130,11 +130,14 @@ def main():
             SeqIO.write(record_dict[record], output_handle, "fasta")
     if name_seqs == True:
         input = output_file
-        get_ids = "grep 'gi' " + input + " | cut -f2 -d'|' > gene_ids.txt"
+        get_ids = "grep 'gi' " + input + " | cut -f2 -d'|' > gene_ids.tmp"
         subprocess.call(get_ids,shell=True)
-        ids = "gene_ids.txt"        
-        get_names = "while read ids; do title=$(~/edirect/efetch -id $ids -db protein -format docsum | grep -o -P '(?<=<Title>).*(?=</Title>)'); echo " + "$ids    $title " + "; done < " + ids + " > test.txt"
+        ids = "gene_ids.tmp"        
+        get_names = "while read ids; do title=$(efetch -id $ids -db protein -format docsum | grep -o -P '(?<=<Title>).*(?=</Title>)'); echo " + "$ids    $title " + "; done < " + ids + " > GeneID_Names.out"
         subprocess.call(get_names, shell=True)
+        cleanup = "rm gene_ids.tmp"
+        id_names = "GeneID_Names.out"
+        name_fasta = "while read ids; do sed $ids
         
 
 
