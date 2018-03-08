@@ -18,6 +18,10 @@
 import argparse
 from Bio import SeqIO
 from collections import defaultdict
+import sys
+import os
+import subprocess
+import fileinput
 
 
 class BlastRes():
@@ -65,13 +69,14 @@ def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input_fasta", type=str, help="fasta file to annotate")
-    parser.add_argument("blast_output", type=str, help="blast output of input_fasta")
-    parser.add_argument("blast_type", type=str, help="type of blast conducted to produce output: currently blastn or blastx")
-    parser.add_argument("output_file", type=str, help="name of the outfile")
-    parser.add_argument("max_diff", type=float, help="maximum percent difference between query and subject")
-    parser.add_argument("max_query_start", type=int, help="maximum start position of blast alignment in query")
-    parser.add_argument("max_subject_start", type=int, help="maximum start position of blast alignment in subject")
+    parser.add_argument("input_fasta", type=str, help="Fasta file to annotate")
+    parser.add_argument("blast_output", type=str, help="Blast output of input_fasta")
+    parser.add_argument("blast_type", type=str, help="Type of blast conducted to produce output: Currently blastn or blastx")
+    parser.add_argument("output_file", type=str, help="Name of the outfile")
+    parser.add_argument("max_diff", type=float, help="Maximum percent difference between query and subject")
+    parser.add_argument("max_query_start", type=int, help="Maximum start position of blast alignment in query")
+    parser.add_argument("max_subject_start", type=int, help="Maximum start position of blast alignment in subject")
+    parser.add_argument("descriptive_names", type=bool, help="Would you like descriptive gene names? Yes or No.")
     args = parser.parse_args()
 
     seq_handle = args.input_fasta
@@ -84,6 +89,7 @@ def main():
     if blast_type == 'blastx':
         max_subject_start = (args.max_subject_start)*3
     max_diff = args.max_diff
+    name_seqs = args.descriptive_names
     # read all sequences into the file
     record_dict = SeqIO.to_dict(SeqIO.parse(seq_handle, "fasta"))
 
@@ -118,6 +124,13 @@ def main():
 
             record_dict[record].description = record_dict[record].id +" Annotation: "+ annotation
             SeqIO.write(record_dict[record], output_handle, "fasta")
+    if name_seqs == True:
+        input = output_file
+        get_ids = "grep 'gi' " + input + " | cut -f2 -d'|' > gene_ids.txt"
+        subprocess.call(get_ids,shell=True)
+        ids = "gene_ids.txt"        
+        get_names = "while read ids; do title=$(~/edirect/efetch -id $ids -db protein -format docsum | grep -o -P '(?<=<Title>).*(?=</Title>)'); echo " + "$ids    $title " + "; done < " + ids + " > test.txt"
+        subprocess.call(get_names, shell=True)
         
 
 
