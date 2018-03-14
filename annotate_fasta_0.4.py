@@ -129,17 +129,20 @@ def main():
             record_dict[record].description = record_dict[record].id +" Annotation: "+ annotation
             SeqIO.write(record_dict[record], output_handle, "fasta")
     if name_seqs == True:
-        input = output_file
-        get_ids = "grep 'gi' " + input + " | cut -f2 -d'|' > gene_ids.tmp"
-        subprocess.call(get_ids,shell=True)
-        ids = "gene_ids.tmp"        
-        get_names = "while read ids; do title=$(efetch -id $ids -db protein -format docsum | grep -o -P '(?<=<Title>).*(?=</Title>)'); echo " + "$ids    $title " + "; done < " + ids + " > GeneID_Names.out"
-        subprocess.call(get_names, shell=True)
+        make_copy = "cp " + output_file + " Annotations_Named.fa"
+        subprocess.call(make_copy, shell=True, executable="/bin/bash")
+        get_ids = "grep 'gi' Annotations_Named.fa | cut -f2 -d'|' > gene_ids.tmp"
+        subprocess.call(get_ids, shell=True, executable="/bin/bash")
+        get_names = "while read ids; do title=$(efetch -id $ids -db protein -format docsum | grep -o -P '(?<=<Title>).*(?=</Title>)'); echo " + "$ids" + "," + "$title " + "; done < gene_ids.tmp > GeneID_Names.out"
+        subprocess.call(get_names, shell=True, executable="/bin/bash")
+        clean_names = "sed -i 's/ /_/g' GeneID_Names.out"
+        subprocess.call(clean_names, shell=True, executable="/bin/bash")
+        rename_genes = 'gids=($(cut -d"," -f1 "./GeneID_Names.out")) && names=($(cut -d"," -f2 "./GeneID_Names.out")) && idx=${!gids[*]} && for x in ${idx[@]}; do sed -i "s/gi|${gids[$x]}.*/${names[$x]}/g" Annotations_Named.fa; done'
+        subprocess.call(rename_genes, shell=True, executable="/bin/bash")
         cleanup = "rm gene_ids.tmp"
-        id_names = "GeneID_Names.out"
-        name_fasta = "while read ids; do sed $ids
+        subprocess.call(cleanup, shell=True, executable="/bin/bash")
         
-
+        
 
 if __name__ == "__main__":
     main()
