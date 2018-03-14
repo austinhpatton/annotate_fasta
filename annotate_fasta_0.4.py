@@ -53,6 +53,7 @@ def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_
     returns a boolean, False if the conditions are not met
 
     """
+    assert blast_type in ['blastn', 'blastx'], "Only blastn and blastx is supported."
     res = False
 <<<<<<< HEAD
     
