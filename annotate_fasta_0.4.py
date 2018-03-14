@@ -47,7 +47,7 @@ class BlastRes():
         self.bitscore = bitscore
         
         
-def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_subject_start = 3, max_diff = 0.05, blast_type = 'blastx'):
+def check_hit_position(BlastRes_obj, current_coverage, max_query_start = 1, max_subject_start = 9, max_diff = 0.10, blast_type = 'blastx'):
     """
     Checks if a hit stored in a BlastRes class object meets the hit criteria we give
     returns a boolean, False if the conditions are not met
